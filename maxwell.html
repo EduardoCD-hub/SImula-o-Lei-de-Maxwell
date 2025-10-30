@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>As 4 Leis de Maxwell - Simulação Interativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            background-color: #020617;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button.active {
+            border-color: #8b5cf6;
+            color: #a78bfa;
+            background-color: #1e293b;
+        }
+
+        /* Estilos para Lei 1 - Gauss Elétrica */
+        #lei1-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #8b5cf6; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei1-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #8b5cf6; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei1-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
+        #lei1-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
+        #lei1-container .formula { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.1em; }
+
+        /* Estilos para Lei 2 - Gauss Magnética */
+        #lei2-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #06b6d4; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei2-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #06b6d4; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei2-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
+        #lei2-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
+
+        /* Estilos para Lei 3 - Faraday */
+        #lei3-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #f59e0b; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei3-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #f59e0b; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei3-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
+        #lei3-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
+
+        /* Estilos para Lei 4 - Ampère-Maxwell */
+        #lei4-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #10b981; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei4-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #10b981; cursor: pointer; border-radius: 50%; border: 2px solid white; }
+        #lei4-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
+        #lei4-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
+
+        .explanation-step { opacity: 0.4; transition: opacity 0.5s ease-in-out; }
+        .explanation-step.active { opacity: 1; }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans p-4">
+
+    <div class="text-center mb-6">
+        <h1 class="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 mb-2">
+            As 4 Leis de Maxwell
+        </h1>
+        <p class="text-slate-400 text-lg">Explore as equações fundamentais do eletromagnetismo</p>
+    </div>
+
+    <div class="flex justify-center mb-8 border-b border-slate-700 bg-slate-900 rounded-t-lg overflow-x-auto">
+        <button class="tab-button active text-base font-semibold py-4 px-6 border-b-4 border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition-all duration-300 whitespace-nowrap" onclick="openTab(event, 'lei1')">
+            1ª Lei - Gauss (Elétrica)
+        </button>
+        <button class="tab-button text-base font-semibold py-4 px-6 border-b-4 border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition-all duration-300 whitespace-nowrap" onclick="openTab(event, 'lei2')">
+            2ª Lei - Gauss (Magnética)
+        </button>
+        <button class="tab-button text-base font-semibold py-4 px-6 border-b-4 border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition-all duration-300 whitespace-nowrap" onclick="openTab(event, 'lei3')">
+            3ª Lei - Faraday
+        </button>
+        <button class="tab-button text-base font-semibold py-4 px-6 border-b-4 border-transparent text-slate-400 hover:text-white hover:bg-slate-800 transition-all duration-300 whitespace-nowrap" onclick="openTab(event, 'lei4')">
+            4ª Lei - Ampère-Maxwell
+        </button>
+    </div>
+
+    <!-- LEI 1: GAUSS PARA CAMPO ELÉTRICO -->
+    <div id="lei1" class="tab-content active">
+        <div id="lei1-container">
+            <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
+                <div class="relative flex flex-col items-center">
+                    <h1 class="text-4xl font-bold text-white mb-6" style="text-shadow: 0 0 15px rgba(167, 139, 250, 0.5);">1ª Lei de Maxwell - Lei de Gauss (Elétrica)</h1>
+                    <canvas id="lei1-canvas" width="800" height="600" class="rounded-2xl shadow-2xl ring-2 ring-purple-400/30"></canvas>
+                    <div class="mt-8 max-w-4xl mx-auto w-full space-y-4 rounded-xl bg-slate-800/80 p-6 backdrop-blur-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Carga Central</label>
+                                    <span id="lei1-cargaDisplay" class="text-lg font-bold text-purple-300">+50 nC</span>
+                                </div>
+                                <input type="range" id="lei1-cargaSlider" min="-100" max="100" value="50" step="5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Raio da Superfície</label>
+                                    <span id="lei1-raioDisplay" class="text-lg font-bold text-cyan-300">150 px</span>
+                                </div>
+                                <input type="range" id="lei1-raioSlider" min="80" max="250" value="150" step="10" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-4 pt-4 border-t border-slate-700/50">
+                            <button id="lei1-addCargaBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Adicionar Carga Externa</button>
+                            <button id="lei1-removeCargaBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Remover Carga Externa</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative w-full lg:w-[450px] flex flex-col items-start gap-4 bg-slate-900/50 p-6 rounded-xl shadow-lg ring-1 ring-purple-500/20">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center relative ring-2 ring-white/30 shadow-lg">
+                            <div class="absolute w-12 h-12 bg-white/20 rounded-full -top-1 -left-1"></div>
+                            <div class="flex gap-3 relative">
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                            </div>
+                            <div id="lei1-avatarMouth" class="absolute bottom-4 w-5 h-1 bg-slate-800 rounded-full transition-all duration-100"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-2xl font-bold text-purple-300">Prof. Maxwell</h3>
+                            <p class="text-purple-200/80 text-sm">Especialista em Eletromagnetismo</p>
+                        </div>
+                        <button id="lei1-voiceToggle" class="ml-auto w-10 h-10 rounded-full bg-purple-500/30 flex items-center justify-center text-purple-200 hover:bg-purple-500/50 transition-all">
+                            <svg id="lei1-voiceIconOn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            <svg id="lei1-voiceIconOff" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="1" x2="1" y2="23"></line></svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-4 w-full mt-4">
+                        <div id="lei1-step1" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">O que é a Lei de Gauss?</p><p class="text-sm mt-1">A Lei de Gauss relaciona o fluxo elétrico através de uma superfície fechada com a carga total contida dentro dela.</p></div></div>
+                        <div id="lei1-step2" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">A Fórmula</p><div class="text-center mt-2 p-3 bg-slate-900/50 rounded"><p class="formula text-yellow-300 text-xl">∮ E · dA = Q/ε₀</p></div><p class="text-xs mt-2 text-slate-300">Onde E é o campo elétrico, Q é a carga interna e ε₀ é a permissividade do vácuo (8.85×10⁻¹² F/m).</p></div></div>
+                        <div id="lei1-step3" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">Superfície Gaussiana</p><p class="text-sm mt-1">A superfície esférica mostrada é uma "superfície gaussiana". O fluxo depende apenas da carga interna, não da externa!</p></div></div>
+                        <div id="lei1-step4" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">Aplicações Práticas</p><p class="text-sm mt-1">Esta lei é fundamental para calcular campos elétricos em situações com simetria, como esferas, cilindros e planos infinitos.</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEI 2: GAUSS PARA MAGNETISMO -->
+    <div id="lei2" class="tab-content">
+        <div id="lei2-container">
+            <div class="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
+                <div class="relative flex flex-col items-center">
+                    <h1 class="text-4xl font-bold text-white mb-6" style="text-shadow: 0 0 15px rgba(34, 211, 238, 0.5);">2ª Lei de Maxwell - Lei de Gauss (Magnética)</h1>
+                    <canvas id="lei2-canvas" width="800" height="600" class="rounded-2xl shadow-2xl ring-2 ring-cyan-400/30"></canvas>
+                    <div class="mt-8 max-w-4xl mx-auto w-full space-y-4 rounded-xl bg-slate-800/80 p-6 backdrop-blur-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Intensidade do Ímã</label>
+                                    <span id="lei2-intensidadeDisplay" class="text-lg font-bold text-cyan-300">70%</span>
+                                </div>
+                                <input type="range" id="lei2-intensidadeSlider" min="20" max="100" value="70" step="5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Distância dos Polos</label>
+                                    <span id="lei2-distanciaDisplay" class="text-lg font-bold text-blue-300">120 px</span>
+                                </div>
+                                <input type="range" id="lei2-distanciaSlider" min="60" max="180" value="120" step="10" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-4 pt-4 border-t border-slate-700/50">
+                            <button id="lei2-addImaBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Adicionar Segundo Ímã</button>
+                            <button id="lei2-removeImaBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Remover Segundo Ímã</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative w-full lg:w-[450px] flex flex-col items-start gap-4 bg-slate-900/50 p-6 rounded-xl shadow-lg ring-1 ring-cyan-500/20">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center relative ring-2 ring-white/30 shadow-lg">
+                            <div class="absolute w-12 h-12 bg-white/20 rounded-full -top-1 -left-1"></div>
+                            <div class="flex gap-3 relative">
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                            </div>
+                            <div id="lei2-avatarMouth" class="absolute bottom-4 w-5 h-1 bg-slate-800 rounded-full transition-all duration-100"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-2xl font-bold text-cyan-300">Prof. Maxwell</h3>
+                            <p class="text-cyan-200/80 text-sm">Especialista em Magnetismo</p>
+                        </div>
+                        <button id="lei2-voiceToggle" class="ml-auto w-10 h-10 rounded-full bg-cyan-500/30 flex items-center justify-center text-cyan-200 hover:bg-cyan-500/50 transition-all">
+                            <svg id="lei2-voiceIconOn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            <svg id="lei2-voiceIconOff" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="1" x2="1" y2="23"></line></svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-4 w-full mt-4">
+                        <div id="lei2-step1" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-cyan-200">Monopolos Não Existem!</p><p class="text-sm mt-1">Diferente das cargas elétricas, não existem "monopolos magnéticos". Todo ímã sempre tem um polo Norte E um polo Sul.</p></div></div>
+                        <div id="lei2-step2" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-cyan-200">A Fórmula</p><div class="text-center mt-2 p-3 bg-slate-900/50 rounded"><p class="formula text-yellow-300 text-xl">∮ B · dA = 0</p></div><p class="text-xs mt-2 text-slate-300">O fluxo magnético através de qualquer superfície fechada é sempre zero! As linhas de campo sempre formam loops fechados.</p></div></div>
+                        <div id="lei2-step3" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-cyan-200">Linhas Fechadas</p><p class="text-sm mt-1">Observe que as linhas de campo magnético saem do polo Norte e entram no polo Sul, formando loops contínuos. Elas nunca começam ou terminam!</p></div></div>
+                        <div id="lei2-step4" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-cyan-200">Consequência Importante</p><p class="text-sm mt-1">Se você cortar um ímã ao meio, não obtém um polo Norte isolado e um Sul isolado. Você obtém dois ímãs menores, cada um com ambos os polos!</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEI 3: FARADAY -->
+    <div id="lei3" class="tab-content">
+        <div id="lei3-container">
+            <div class="min-h-screen bg-gradient-to-br from-slate-900 via-amber-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
+                <div class="relative flex flex-col items-center">
+                    <h1 class="text-4xl font-bold text-white mb-6" style="text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);">3ª Lei de Maxwell - Lei de Faraday</h1>
+                    <canvas id="lei3-canvas" width="800" height="600" class="rounded-2xl shadow-2xl ring-2 ring-amber-400/30"></canvas>
+                    <div class="mt-8 max-w-4xl mx-auto w-full space-y-4 rounded-xl bg-slate-800/80 p-6 backdrop-blur-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Velocidade do Ímã</label>
+                                    <span id="lei3-velocidadeDisplay" class="text-lg font-bold text-amber-300">5 px/s</span>
+                                </div>
+                                <input type="range" id="lei3-velocidadeSlider" min="1" max="10" value="5" step="1" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Número de Espiras</label>
+                                    <span id="lei3-espirasDisplay" class="text-lg font-bold text-yellow-300">5</span>
+                                </div>
+                                <input type="range" id="lei3-espirasSlider" min="3" max="8" value="5" step="1" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-4 pt-4 border-t border-slate-700/50">
+                            <button id="lei3-toggleBtn" class="bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Pausar Movimento</button>
+                            <button id="lei3-reverseBtn" class="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Inverter Direção</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative w-full lg:w-[450px] flex flex-col items-start gap-4 bg-slate-900/50 p-6 rounded-xl shadow-lg ring-1 ring-amber-500/20">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center relative ring-2 ring-white/30 shadow-lg">
+                            <div class="absolute w-12 h-12 bg-white/20 rounded-full -top-1 -left-1"></div>
+                            <div class="flex gap-3 relative">
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                            </div>
+                            <div id="lei3-avatarMouth" class="absolute bottom-4 w-5 h-1 bg-slate-800 rounded-full transition-all duration-100"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-2xl font-bold text-amber-300">Prof. Maxwell</h3>
+                            <p class="text-amber-200/80 text-sm">Especialista em Indução</p>
+                        </div>
+                        <button id="lei3-voiceToggle" class="ml-auto w-10 h-10 rounded-full bg-amber-500/30 flex items-center justify-center text-amber-200 hover:bg-amber-500/50 transition-all">
+                            <svg id="lei3-voiceIconOn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            <svg id="lei3-voiceIconOff" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="1" x2="1" y2="23"></line></svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-4 w-full mt-4">
+                        <div id="lei3-step1" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-amber-200">Indução Eletromagnética</p><p class="text-sm mt-1">Quando o fluxo magnético através de uma bobina varia, uma força eletromotriz (tensão) é induzida! Este é o princípio dos geradores elétricos.</p></div></div>
+                        <div id="lei3-step2" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-amber-200">A Fórmula</p><div class="text-center mt-2 p-3 bg-slate-900/50 rounded"><p class="formula text-yellow-300 text-xl">∮ E · dl = -dΦ_B/dt</p></div><p class="text-xs mt-2 text-slate-300">A FEM induzida é igual à taxa de variação do fluxo magnético. O sinal negativo é a Lei de Lenz: a corrente induzida se opõe à variação!</p></div></div>
+                        <div id="lei3-step3" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-amber-200">Movimento Gera Eletricidade</p><p class="text-sm mt-1">Observe que quando o ímã se move através da bobina, elétrons são forçados a se mover, criando corrente elétrica. Mais rápido = mais tensão!</p></div></div>
+                        <div id="lei3-step4" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-amber-200">Aplicações do Dia a Dia</p><p class="text-sm mt-1">Geradores de usinas, carregadores sem fio, transformadores e até guitarras elétricas funcionam baseados nesta lei fundamental!</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEI 4: AMPÈRE-MAXWELL -->
+    <div id="lei4" class="tab-content">
+        <div id="lei4-container">
+            <div class="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
+                <div class="relative flex flex-col items-center">
+                    <h1 class="text-4xl font-bold text-white mb-6" style="text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);">4ª Lei de Maxwell - Lei de Ampère-Maxwell</h1>
+                    <canvas id="lei4-canvas" width="800" height="600" class="rounded-2xl shadow-2xl ring-2 ring-emerald-400/30"></canvas>
+                    <div class="mt-8 max-w-4xl mx-auto w-full space-y-4 rounded-xl bg-slate-800/80 p-6 backdrop-blur-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Corrente Elétrica</label>
+                                    <span id="lei4-correnteDisplay" class="text-lg font-bold text-emerald-300">8.0 A</span>
+                                </div>
+                                <input type="range" id="lei4-correnteSlider" min="1" max="15" value="8" step="0.5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-sm font-semibold text-white">Raio do Loop</label>
+                                    <span id="lei4-raioDisplay" class="text-lg font-bold text-green-300">100 px</span>
+                                </div>
+                                <input type="range" id="lei4-raioSlider" min="60" max="150" value="100" step="10" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-4 pt-4 border-t border-slate-700/50">
+                            <button id="lei4-addFioBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Adicionar Segundo Fio</button>
+                            <button id="lei4-removeFioBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Remover Segundo Fio</button>
+                            <button id="lei4-reverseBtn" class="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Inverter Corrente</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative w-full lg:w-[450px] flex flex-col items-start gap-4 bg-slate-900/50 p-6 rounded-xl shadow-lg ring-1 ring-emerald-500/20">
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center relative ring-2 ring-white/30 shadow-lg">
+                            <div class="absolute w-12 h-12 bg-white/20 rounded-full -top-1 -left-1"></div>
+                            <div class="flex gap-3 relative">
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                                <div class="w-4 h-4 bg-white rounded-full flex items-center justify-center"><div class="w-2 h-2 bg-slate-800 rounded-full"></div></div>
+                            </div>
+                            <div id="lei4-avatarMouth" class="absolute bottom-4 w-5 h-1 bg-slate-800 rounded-full transition-all duration-100"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-2xl font-bold text-emerald-300">Prof. Maxwell</h3>
+                            <p class="text-emerald-200/80 text-sm">Especialista em Correntes</p>
+                        </div>
+                        <button id="lei4-voiceToggle" class="ml-auto w-10 h-10 rounded-full bg-emerald-500/30 flex items-center justify-center text-emerald-200 hover:bg-emerald-500/50 transition-all">
+                            <svg id="lei4-voiceIconOn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            <svg id="lei4-voiceIconOff" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="1" x2="1" y2="23"></line></svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-4 w-full mt-4">
+                        <div id="lei4-step1" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-emerald-200">Corrente Cria Magnetismo</p><p class="text-sm mt-1">Uma corrente elétrica sempre cria um campo magnético ao seu redor! Este é o princípio dos eletroímãs e motores elétricos.</p></div></div>
+                        <div id="lei4-step2" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-emerald-200">A Fórmula Completa</p><div class="text-center mt-2 p-3 bg-slate-900/50 rounded"><p class="formula text-yellow-300 text-lg">∮ B · dl = μ₀I + μ₀ε₀ dΦ_E/dt</p></div><p class="text-xs mt-2 text-slate-300">O primeiro termo é a Lei de Ampère (corrente). O segundo termo foi adicionado por Maxwell (campo elétrico variável)!</p></div></div>
+                        <div id="lei4-step3" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-emerald-200">Regra da Mão Direita</p><p class="text-sm mt-1">Aponte o polegar na direção da corrente. Seus dedos curvados mostram a direção do campo magnético! Observe as linhas circulares ao redor do fio.</p></div></div>
+                        <div id="lei4-step4" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-emerald-200">A Contribuição de Maxwell</p><p class="text-sm mt-1">Maxwell adicionou o termo do campo elétrico variável, completando a simetria das equações e prevendo a existência de ondas eletromagnéticas (luz)!</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // SISTEMA DE ABAS
+        // ============================================
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            const tabButtons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Reiniciar animações quando trocar de aba
+            if (tabName === 'lei1') initLei1();
+            if (tabName === 'lei2') initLei2();
+            if (tabName === 'lei3') initLei3();
+            if (tabName === 'lei4') initLei4();
+        }
+
+        // ============================================
+        // SISTEMA DE VOZ (Text-to-Speech)
+        // ============================================
+        function createVoiceSystem(leiId, steps) {
+            let currentStep = 0;
+            let voiceEnabled = true;
+            let isSpeaking = false;
+            
+            const voiceToggle = document.getElementById(`${leiId}-voiceToggle`);
+            const voiceIconOn = document.getElementById(`${leiId}-voiceIconOn`);
+            const voiceIconOff = document.getElementById(`${leiId}-voiceIconOff`);
+            const avatarMouth = document.getElementById(`${leiId}-avatarMouth`);
+            
+            voiceToggle.addEventListener('click', () => {
+                voiceEnabled = !voiceEnabled;
+                if (voiceEnabled) {
+                    voiceIconOn.classList.remove('hidden');
+                    voiceIconOff.classList.add('hidden');
+                } else {
+                    voiceIconOn.classList.add('hidden');
+                    voiceIconOff.classList.remove('hidden');
+                    // Cancelar qualquer fala em andamento imediatamente
+                    if (window.speechSynthesis.speaking) {
+                        window.speechSynthesis.cancel();
+                    }
+                    isSpeaking = false;
+                    avatarMouth.style.height = '1px';
+                }
+            });
+            
+            function speak(text) {
+                if (!voiceEnabled) {
+                    // Se a voz foi desabilitada, garantir que nada está falando
+                    if (window.speechSynthesis.speaking) {
+                        window.speechSynthesis.cancel();
+                    }
+                    return;
+                }
+                
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'pt-BR';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                
+                let mouthInterval;
+                utterance.onstart = () => {
+                    if (!voiceEnabled) {
+                        window.speechSynthesis.cancel();
+                        return;
+                    }
+                    isSpeaking = true;
+                    mouthInterval = setInterval(() => {
+                        if (!voiceEnabled) {
+                            clearInterval(mouthInterval);
+                            avatarMouth.style.height = '1px';
+                            return;
+                        }
+                        const height = Math.random() * 8 + 2;
+                        avatarMouth.style.height = height + 'px';
+                    }, 100);
+                };
+                
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    clearInterval(mouthInterval);
+                    avatarMouth.style.height = '1px';
+                };
+                
+                if (voiceEnabled) {
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+            
+            function nextStep() {
+                steps.forEach(step => step.classList.remove('active'));
+                
+                const stepElement = document.getElementById(`${leiId}-step${currentStep + 1}`);
+                if (stepElement) {
+                    stepElement.classList.add('active');
+                    const text = stepElement.innerText;
+                    speak(text);
+                }
+                
+                currentStep = (currentStep + 1) % steps.length;
+            }
+            
+            nextStep();
+            setInterval(nextStep, 8000);
+        }
+
+        // ============================================
+        // LEI 1: GAUSS PARA CAMPO ELÉTRICO
+        // ============================================
+        function initLei1() {
+            const canvas = document.getElementById('lei1-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let carga = 50;
+            let raio = 150;
+            let cargasExternas = [];
+            
+            const cargaSlider = document.getElementById('lei1-cargaSlider');
+            const cargaDisplay = document.getElementById('lei1-cargaDisplay');
+            const raioSlider = document.getElementById('lei1-raioSlider');
+            const raioDisplay = document.getElementById('lei1-raioDisplay');
+            const addBtn = document.getElementById('lei1-addCargaBtn');
+            const removeBtn = document.getElementById('lei1-removeCargaBtn');
+            
+            cargaSlider.addEventListener('input', (e) => {
+                carga = parseFloat(e.target.value);
+                cargaDisplay.textContent = (carga > 0 ? '+' : '') + carga + ' nC';
+            });
+            
+            raioSlider.addEventListener('input', (e) => {
+                raio = parseFloat(e.target.value);
+                raioDisplay.textContent = raio + ' px';
+            });
+            
+            addBtn.addEventListener('click', () => {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = raio + 80 + Math.random() * 50;
+                cargasExternas.push({
+                    x: 400 + Math.cos(angle) * distance,
+                    y: 300 + Math.sin(angle) * distance,
+                    q: (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 30)
+                });
+                addBtn.classList.add('hidden');
+                removeBtn.classList.remove('hidden');
+            });
+            
+            removeBtn.addEventListener('click', () => {
+                cargasExternas = [];
+                removeBtn.classList.add('hidden');
+                addBtn.classList.remove('hidden');
+            });
+            
+            function draw() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Linhas de campo elétrico
+                const numLinhas = Math.abs(carga) / 5;
+                for (let i = 0; i < numLinhas; i++) {
+                    const angle = (i / numLinhas) * Math.PI * 2;
+                    const startX = 400 + Math.cos(angle) * 25;
+                    const startY = 300 + Math.sin(angle) * 25;
+                    const endX = 400 + Math.cos(angle) * (raio + 50);
+                    const endY = 300 + Math.sin(angle) * (raio + 50);
+                    
+                    ctx.strokeStyle = carga > 0 ? '#a78bfa' : '#f472b6';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                    
+                    // Setas
+                    const arrowSize = 8;
+                    const arrowAngle = carga > 0 ? angle : angle + Math.PI;
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(endX - arrowSize * Math.cos(arrowAngle - 0.3), endY - arrowSize * Math.sin(arrowAngle - 0.3));
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(endX - arrowSize * Math.cos(arrowAngle + 0.3), endY - arrowSize * Math.sin(arrowAngle + 0.3));
+                    ctx.stroke();
+                }
+                
+                // Superfície gaussiana
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([10, 5]);
+                ctx.beginPath();
+                ctx.arc(400, 300, raio, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Carga central
+                ctx.fillStyle = carga > 0 ? '#8b5cf6' : '#ec4899';
+                ctx.beginPath();
+                ctx.arc(400, 300, 20, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(carga > 0 ? '+' : '−', 400, 300);
+                
+                // Cargas externas
+                cargasExternas.forEach(ce => {
+                    ctx.fillStyle = ce.q > 0 ? '#8b5cf6' : '#ec4899';
+                    ctx.beginPath();
+                    ctx.arc(ce.x, ce.y, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 18px Arial';
+                    ctx.fillText(ce.q > 0 ? '+' : '−', ce.x, ce.y);
+                });
+                
+                // Texto informativo
+                ctx.fillStyle = '#a78bfa';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Fluxo = Q/ε₀ = ${carga.toFixed(1)} nC / ε₀`, 20, 30);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px Arial';
+                ctx.fillText('(Cargas externas não afetam o fluxo!)', 20, 55);
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+            
+            // Sistema de voz
+            const steps = [
+                document.getElementById('lei1-step1'),
+                document.getElementById('lei1-step2'),
+                document.getElementById('lei1-step3'),
+                document.getElementById('lei1-step4')
+            ];
+            createVoiceSystem('lei1', steps);
+        }
+
+        // ============================================
+        // LEI 2: GAUSS PARA MAGNETISMO
+        // ============================================
+        function initLei2() {
+            const canvas = document.getElementById('lei2-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let intensidade = 70;
+            let distancia = 120;
+            let segundoIma = false;
+            
+            const intensidadeSlider = document.getElementById('lei2-intensidadeSlider');
+            const intensidadeDisplay = document.getElementById('lei2-intensidadeDisplay');
+            const distanciaSlider = document.getElementById('lei2-distanciaSlider');
+            const distanciaDisplay = document.getElementById('lei2-distanciaDisplay');
+            const addBtn = document.getElementById('lei2-addImaBtn');
+            const removeBtn = document.getElementById('lei2-removeImaBtn');
+            
+            intensidadeSlider.addEventListener('input', (e) => {
+                intensidade = parseFloat(e.target.value);
+                intensidadeDisplay.textContent = intensidade + '%';
+            });
+            
+            distanciaSlider.addEventListener('input', (e) => {
+                distancia = parseFloat(e.target.value);
+                distanciaDisplay.textContent = distancia + ' px';
+            });
+            
+            addBtn.addEventListener('click', () => {
+                segundoIma = true;
+                addBtn.classList.add('hidden');
+                removeBtn.classList.remove('hidden');
+            });
+            
+            removeBtn.addEventListener('click', () => {
+                segundoIma = false;
+                removeBtn.classList.add('hidden');
+                addBtn.classList.remove('hidden');
+            });
+            
+            function drawMagnet(x, y, dist, flip = false) {
+                const halfDist = dist / 2;
+                
+                // Polo Norte (vermelho)
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(x - halfDist - 30, y - 40, 30, 80);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(flip ? 'S' : 'N', x - halfDist - 15, y + 8);
+                
+                // Polo Sul (azul)
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(x + halfDist, y - 40, 30, 80);
+                ctx.fillStyle = 'white';
+                ctx.fillText(flip ? 'N' : 'S', x + halfDist + 15, y + 8);
+                
+                // Linhas de campo magnético
+                const numLinhas = Math.floor(intensidade / 10);
+                for (let i = 0; i < numLinhas; i++) {
+                    const offset = (i - numLinhas / 2) * 15;
+                    const startX = flip ? x + halfDist + 30 : x - halfDist - 30;
+                    const endX = flip ? x - halfDist : x + halfDist;
+                    const controlY = y + offset - 80;
+                    
+                    ctx.strokeStyle = `rgba(34, 211, 238, ${intensidade / 100})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(startX, y + offset);
+                    ctx.quadraticCurveTo(x, controlY, endX, y + offset);
+                    ctx.stroke();
+                    
+                    // Setas
+                    const arrowX = (startX + endX) / 2;
+                    const arrowY = controlY + (y + offset - controlY) / 2;
+                    const angle = flip ? Math.PI : 0;
+                    ctx.beginPath();
+                    ctx.moveTo(arrowX, arrowY);
+                    ctx.lineTo(arrowX - 8 * Math.cos(angle - 0.3), arrowY - 8 * Math.sin(angle - 0.3));
+                    ctx.moveTo(arrowX, arrowY);
+                    ctx.lineTo(arrowX - 8 * Math.cos(angle + 0.3), arrowY - 8 * Math.sin(angle + 0.3));
+                    ctx.stroke();
+                }
+            }
+            
+            function draw() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Desenhar ímã(s)
+                if (segundoIma) {
+                    drawMagnet(300, 300, distancia, false);
+                    drawMagnet(500, 300, distancia, true);
+                } else {
+                    drawMagnet(400, 300, distancia, false);
+                }
+                
+                // Texto informativo
+                ctx.fillStyle = '#22d3ee';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('∮ B · dA = 0', 20, 30);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px Arial';
+                ctx.fillText('Fluxo magnético total = 0 (linhas sempre fechadas)', 20, 55);
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+            
+            // Sistema de voz
+            const steps = [
+                document.getElementById('lei2-step1'),
+                document.getElementById('lei2-step2'),
+                document.getElementById('lei2-step3'),
+                document.getElementById('lei2-step4')
+            ];
+            createVoiceSystem('lei2', steps);
+        }
+
+        // ============================================
+        // LEI 3: LEI DE FARADAY
+        // ============================================
+        function initLei3() {
+            const canvas = document.getElementById('lei3-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let velocidade = 5;
+            let espiras = 5;
+            let magnetY = 100;
+            let direcao = 1;
+            let pausado = false;
+            
+            const velocidadeSlider = document.getElementById('lei3-velocidadeSlider');
+            const velocidadeDisplay = document.getElementById('lei3-velocidadeDisplay');
+            const espirasSlider = document.getElementById('lei3-espirasSlider');
+            const espirasDisplay = document.getElementById('lei3-espirasDisplay');
+            const toggleBtn = document.getElementById('lei3-toggleBtn');
+            const reverseBtn = document.getElementById('lei3-reverseBtn');
+            
+            velocidadeSlider.addEventListener('input', (e) => {
+                velocidade = parseFloat(e.target.value);
+                velocidadeDisplay.textContent = velocidade + ' px/s';
+            });
+            
+            espirasSlider.addEventListener('input', (e) => {
+                espiras = parseInt(e.target.value);
+                espirasDisplay.textContent = espiras;
+            });
+            
+            toggleBtn.addEventListener('click', () => {
+                pausado = !pausado;
+                toggleBtn.textContent = pausado ? 'Retomar Movimento' : 'Pausar Movimento';
+            });
+            
+            reverseBtn.addEventListener('click', () => {
+                direcao *= -1;
+            });
+            
+            function draw() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Atualizar posição do ímã
+                if (!pausado) {
+                    magnetY += velocidade * direcao * 0.5;
+                    if (magnetY > 500 || magnetY < 100) {
+                        direcao *= -1;
+                    }
+                }
+                
+                // Bobina
+                const bobinaCenterY = 300;
+                const bobinaWidth = 120;
+                const bobinaHeight = 200;
+                
+                for (let i = 0; i < espiras; i++) {
+                    const offset = (i - espiras / 2) * 8;
+                    ctx.strokeStyle = '#d97706';
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.ellipse(400 + offset, bobinaCenterY, bobinaWidth / 2, bobinaHeight / 2, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                // Ímã
+                const magnetSize = 40;
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(380, magnetY - magnetSize, 40, magnetSize);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('N', 400, magnetY - magnetSize / 2);
+                
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillRect(380, magnetY, 40, magnetSize);
+                ctx.fillStyle = 'white';
+                ctx.fillText('S', 400, magnetY + magnetSize / 2);
+                
+                // Calcular FEM induzida (proporcional à velocidade e espiras)
+                const fem = Math.abs(velocidade * espiras * 0.5);
+                const dentroBoina = magnetY > bobinaCenterY - bobinaHeight / 2 && magnetY < bobinaCenterY + bobinaHeight / 2;
+                
+                // Lâmpada
+                const lampadaX = 550;
+                const lampadaY = 300;
+                const brilho = dentroBoina ? fem / 40 : 0;
+                
+                ctx.fillStyle = `rgba(251, 191, 36, ${brilho})`;
+                ctx.beginPath();
+                ctx.arc(lampadaX, lampadaY, 40, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(lampadaX, lampadaY, 30, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Fios conectando
+                ctx.strokeStyle = '#d97706';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(400 + bobinaWidth / 2, bobinaCenterY - 50);
+                ctx.lineTo(lampadaX - 30, lampadaY);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(400 + bobinaWidth / 2, bobinaCenterY + 50);
+                ctx.lineTo(lampadaX - 30, lampadaY + 40);
+                ctx.stroke();
+                
+                // Texto informativo
+                ctx.fillStyle = '#f59e0b';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`FEM Induzida ≈ ${fem.toFixed(1)} V`, 20, 30);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px Arial';
+                ctx.fillText(`Fluxo ${direcao > 0 ? 'aumentando' : 'diminuindo'} → Corrente induzida`, 20, 55);
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+            
+            // Sistema de voz
+            const steps = [
+                document.getElementById('lei3-step1'),
+                document.getElementById('lei3-step2'),
+                document.getElementById('lei3-step3'),
+                document.getElementById('lei3-step4')
+            ];
+            createVoiceSystem('lei3', steps);
+        }
+
+        // ============================================
+        // LEI 4: AMPÈRE-MAXWELL
+        // ============================================
+        function initLei4() {
+            const canvas = document.getElementById('lei4-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let corrente = 8;
+            let raioLoop = 100;
+            let segundoFio = false;
+            let direcao = 1;
+            let particulas = [];
+            
+            const correnteSlider = document.getElementById('lei4-correnteSlider');
+            const correnteDisplay = document.getElementById('lei4-correnteDisplay');
+            const raioSlider = document.getElementById('lei4-raioSlider');
+            const raioDisplay = document.getElementById('lei4-raioDisplay');
+            const addBtn = document.getElementById('lei4-addFioBtn');
+            const removeBtn = document.getElementById('lei4-removeFioBtn');
+            const reverseBtn = document.getElementById('lei4-reverseBtn');
+            
+            correnteSlider.addEventListener('input', (e) => {
+                corrente = parseFloat(e.target.value);
+                correnteDisplay.textContent = corrente.toFixed(1) + ' A';
+            });
+            
+            raioSlider.addEventListener('input', (e) => {
+                raioLoop = parseFloat(e.target.value);
+                raioDisplay.textContent = raioLoop + ' px';
+            });
+            
+            addBtn.addEventListener('click', () => {
+                segundoFio = true;
+                addBtn.classList.add('hidden');
+                removeBtn.classList.remove('hidden');
+            });
+            
+            removeBtn.addEventListener('click', () => {
+                segundoFio = false;
+                removeBtn.classList.add('hidden');
+                addBtn.classList.remove('hidden');
+            });
+            
+            reverseBtn.addEventListener('click', () => {
+                direcao *= -1;
+            });
+            
+            // Criar partículas para visualizar campo magnético
+            for (let i = 0; i < 30; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 50 + Math.random() * 150;
+                particulas.push({
+                    angle: angle,
+                    radius: radius,
+                    speed: 0.02 + Math.random() * 0.02
+                });
+            }
+            
+            function drawWire(x, y, dir) {
+                // Fio (corte transversal)
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Símbolo de corrente
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(dir > 0 ? '⊙' : '⊗', x, y);
+                
+                // Loops de campo magnético
+                const numLoops = Math.floor(corrente / 2);
+                for (let i = 1; i <= numLoops; i++) {
+                    const radius = i * 25;
+                    ctx.strokeStyle = `rgba(16, 185, 129, ${1 - i / numLoops})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Setas indicando direção
+                    const arrowAngle = Math.PI / 4;
+                    const arrowX = x + Math.cos(arrowAngle) * radius;
+                    const arrowY = y + Math.sin(arrowAngle) * radius;
+                    const tangentAngle = arrowAngle + (dir > 0 ? Math.PI / 2 : -Math.PI / 2);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(arrowX, arrowY);
+                    ctx.lineTo(arrowX - 8 * Math.cos(tangentAngle - 0.3), arrowY - 8 * Math.sin(tangentAngle - 0.3));
+                    ctx.moveTo(arrowX, arrowY);
+                    ctx.lineTo(arrowX - 8 * Math.cos(tangentAngle + 0.3), arrowY - 8 * Math.sin(tangentAngle + 0.3));
+                    ctx.stroke();
+                }
+            }
+            
+            function draw() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Atualizar e desenhar partículas
+                particulas.forEach(p => {
+                    p.angle += p.speed * direcao * (corrente / 8);
+                    const x = 400 + Math.cos(p.angle) * p.radius;
+                    const y = 300 + Math.sin(p.angle) * p.radius;
+                    
+                    ctx.fillStyle = `rgba(16, 185, 129, ${0.6 - p.radius / 300})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Desenhar fio(s)
+                if (segundoFio) {
+                    drawWire(300, 300, direcao);
+                    drawWire(500, 300, -direcao);
+                } else {
+                    drawWire(400, 300, direcao);
+                }
+                
+                // Loop de Ampère
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([10, 5]);
+                ctx.beginPath();
+                ctx.arc(400, 300, raioLoop, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Texto informativo
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`∮ B · dl = μ₀I = μ₀ × ${corrente.toFixed(1)} A`, 20, 30);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px Arial';
+                ctx.fillText(`Campo magnético ${direcao > 0 ? 'anti-horário' : 'horário'} (regra da mão direita)`, 20, 55);
+                ctx.fillText('⊙ = corrente saindo da tela  |  ⊗ = corrente entrando na tela', 20, 580);
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+            
+            // Sistema de voz
+            const steps = [
+                document.getElementById('lei4-step1'),
+                document.getElementById('lei4-step2'),
+                document.getElementById('lei4-step3'),
+                document.getElementById('lei4-step4')
+            ];
+            createVoiceSystem('lei4', steps);
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        window.addEventListener('DOMContentLoaded', () => {
+            initLei1();
+        });
+    </script>
+</body>
+</html>
