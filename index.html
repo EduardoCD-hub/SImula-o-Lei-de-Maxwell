@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>As 4 Leis de Maxwell - Simulação Interativa</title>
+    <title>As 4 Leis de Maxwell - Simulação Interativa (V4)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
@@ -28,20 +28,25 @@
         #lei1-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
         #lei1-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
         #lei1-container .formula { font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.1em; }
+        /* Adicionado cursor para a Aba 1 */
+        #lei1-canvas { cursor: auto; }
+
 
         /* Estilos para Lei 2 - Gauss Magnética */
         #lei2-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #06b6d4; cursor: pointer; border-radius: 50%; border: 2px solid white; }
         #lei2-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #06b6d4; cursor: pointer; border-radius: 50%; border: 2px solid white; }
         #lei2-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
         #lei2-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
+        #lei2-canvas { cursor: grab; } 
 
-        /* Estilos para Lei 3 - Faraday */
+
+        /* Estilos para Lei 3 - Faraday (INTOCADO) */
         #lei3-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #f59e0b; cursor: pointer; border-radius: 50%; border: 2px solid white; }
         #lei3-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #f59e0b; cursor: pointer; border-radius: 50%; border: 2px solid white; }
         #lei3-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
         #lei3-container .speech-bubble:after { content: ''; position: absolute; left: 0; top: 50%; width: 0; height: 0; border: 15px solid transparent; border-right-color: #1e293b; border-left: 0; margin-top: -15px; margin-left: -15px; }
 
-        /* Estilos para Lei 4 - Ampère-Maxwell */
+        /* Estilos para Lei 4 - Ampère-Maxwell (INTOCADO) */
         #lei4-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #10b981; cursor: pointer; border-radius: 50%; border: 2px solid white; }
         #lei4-container input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #10b981; cursor: pointer; border-radius: 50%; border: 2px solid white; }
         #lei4-container .speech-bubble { position: relative; background: #1e293b; border-radius: .8em; padding: 12px 18px; color: white; }
@@ -75,7 +80,6 @@
         </button>
     </div>
 
-    <!-- LEI 1: GAUSS PARA CAMPO ELÉTRICO -->
     <div id="lei1" class="tab-content active">
         <div id="lei1-container">
             <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
@@ -100,8 +104,8 @@
                             </div>
                         </div>
                         <div class="flex justify-center gap-4 pt-4 border-t border-slate-700/50">
-                            <button id="lei1-addCargaBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Adicionar Carga Externa</button>
-                            <button id="lei1-removeCargaBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Remover Carga Externa</button>
+                            <button id="lei1-addCargaBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Add/Resetar Carga Móvel</button>
+                            <button id="lei1-removeCargaBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Remover Carga Móvel</button>
                         </div>
                     </div>
                 </div>
@@ -126,8 +130,9 @@
                     </div>
                     <div class="flex flex-col gap-4 w-full mt-4">
                         <div id="lei1-step1" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">O que é a Lei de Gauss?</p><p class="text-sm mt-1">A Lei de Gauss relaciona o fluxo elétrico através de uma superfície fechada com a carga total contida dentro dela.</p></div></div>
-                        <div id="lei1-step2" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">A Fórmula</p><div class="text-center mt-2 p-3 bg-slate-900/50 rounded"><p class="formula text-yellow-300 text-xl">∮ E · dA = Q/ε₀</p></div><p class="text-xs mt-2 text-slate-300">Onde E é o campo elétrico, Q é a carga interna e ε₀ é a permissividade do vácuo (8.85×10⁻¹² F/m).</p></div></div>
-                        <div id="lei1-step3" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">Superfície Gaussiana</p><p class="text-sm mt-1">A superfície esférica mostrada é uma "superfície gaussiana". O fluxo depende apenas da carga interna, não da externa!</p></div></div>
+                        <div id="lei1-step2" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">A Fórmula</p><div class="text-center mt-2 p-3 bg-slate-900/50 rounded"><p class="formula text-yellow-300 text-xl">∮ E · dA = Q_int/ε₀</p></div><p class="text-xs mt-2 text-slate-300">Onde Q_int é a carga *interna* total. Arraste a carga móvel para dentro e veja o fluxo mudar!</p></div></div>
+                        <div id="lei1-step3" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">Superfície Gaussiana</D>
+                        <p class="text-sm mt-1">O fluxo depende apenas da carga *dentro* da superfície ciana. Cargas externas não contribuem para o fluxo líquido.</p></div></div>
                         <div id="lei1-step4" class="explanation-step"><div class="speech-bubble"><p class="font-bold text-purple-200">Aplicações Práticas</p><p class="text-sm mt-1">Esta lei é fundamental para calcular campos elétricos em situações com simetria, como esferas, cilindros e planos infinitos.</p></div></div>
                     </div>
                 </div>
@@ -135,7 +140,6 @@
         </div>
     </div>
 
-    <!-- LEI 2: GAUSS PARA MAGNETISMO -->
     <div id="lei2" class="tab-content">
         <div id="lei2-container">
             <div class="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
@@ -160,8 +164,8 @@
                             </div>
                         </div>
                         <div class="flex justify-center gap-4 pt-4 border-t border-slate-700/50">
-                            <button id="lei2-addImaBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Adicionar Segundo Ímã</button>
-                            <button id="lei2-removeImaBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Remover Segundo Ímã</button>
+                            <button id="lei2-breakBtn" class="bg-green-500/20 text-green-300 hover:bg-green-500/30 font-semibold py-2 px-4 rounded-lg transition-all">Quebrar Ímã</button>
+                            <button id="lei2-resetBtn" class="bg-red-500/20 text-red-300 hover:bg-red-500/30 font-semibold py-2 px-4 rounded-lg transition-all hidden">Resetar Ímã</button>
                         </div>
                     </div>
                 </div>
@@ -195,7 +199,6 @@
         </div>
     </div>
 
-    <!-- LEI 3: FARADAY -->
     <div id="lei3" class="tab-content">
         <div id="lei3-container">
             <div class="min-h-screen bg-gradient-to-br from-slate-900 via-amber-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
@@ -255,7 +258,6 @@
         </div>
     </div>
 
-    <!-- LEI 4: AMPÈRE-MAXWELL -->
     <div id="lei4" class="tab-content">
         <div id="lei4-container">
             <div class="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900 flex flex-col lg:flex-row items-center justify-center p-6 gap-8">
@@ -317,10 +319,28 @@
     </div>
 
     <script>
+        // Variável global para controlar a animação
+        let globalAnimationId = null;
+        let globalVoiceInterval = null;
+
+
         // ============================================
-        // SISTEMA DE ABAS
+        // SISTEMA DE ABAS (MODIFICADO)
         // ============================================
         function openTab(evt, tabName) {
+            // Parar qualquer animação anterior
+            if (globalAnimationId) {
+                window.cancelAnimationFrame(globalAnimationId);
+                globalAnimationId = null;
+            }
+             // Parar qualquer sistema de voz anterior
+            if (globalVoiceInterval) {
+                clearInterval(globalVoiceInterval);
+                globalVoiceInterval = null;
+            }
+            window.speechSynthesis.cancel();
+
+
             const tabContents = document.getElementsByClassName("tab-content");
             for (let i = 0; i < tabContents.length; i++) {
                 tabContents[i].classList.remove("active");
@@ -342,9 +362,15 @@
         }
 
         // ============================================
-        // SISTEMA DE VOZ (Text-to-Speech)
+        // SISTEMA DE VOZ (MODIFICADO)
         // ============================================
         function createVoiceSystem(leiId, steps) {
+            // Limpar intervalos antigos
+            if (globalVoiceInterval) {
+                clearInterval(globalVoiceInterval);
+                globalVoiceInterval = null;
+            }
+
             let currentStep = 0;
             let voiceEnabled = true;
             let isSpeaking = false;
@@ -354,7 +380,11 @@
             const voiceIconOff = document.getElementById(`${leiId}-voiceIconOff`);
             const avatarMouth = document.getElementById(`${leiId}-avatarMouth`);
             
-            voiceToggle.addEventListener('click', () => {
+            // Usar cloneNode para limpar listeners antigos
+            const newVoiceToggle = voiceToggle.cloneNode(true);
+            voiceToggle.parentNode.replaceChild(newVoiceToggle, voiceToggle);
+
+            newVoiceToggle.addEventListener('click', () => {
                 voiceEnabled = !voiceEnabled;
                 if (voiceEnabled) {
                     voiceIconOn.classList.remove('hidden');
@@ -362,7 +392,6 @@
                 } else {
                     voiceIconOn.classList.add('hidden');
                     voiceIconOff.classList.remove('hidden');
-                    // Cancelar qualquer fala em andamento imediatamente
                     if (window.speechSynthesis.speaking) {
                         window.speechSynthesis.cancel();
                     }
@@ -373,7 +402,6 @@
             
             function speak(text) {
                 if (!voiceEnabled) {
-                    // Se a voz foi desabilitada, garantir que nada está falando
                     if (window.speechSynthesis.speaking) {
                         window.speechSynthesis.cancel();
                     }
@@ -429,19 +457,21 @@
             }
             
             nextStep();
-            setInterval(nextStep, 8000);
+            globalVoiceInterval = setInterval(nextStep, 8000);
         }
 
         // ============================================
-        // LEI 1: GAUSS PARA CAMPO ELÉTRICO
+        // LEI 1: GAUSS PARA CAMPO ELÉTRICO (MODIFICADA V4 - DRAGGABLE)
         // ============================================
         function initLei1() {
             const canvas = document.getElementById('lei1-canvas');
             const ctx = canvas.getContext('2d');
             
-            let carga = 50;
-            let raio = 150;
-            let cargasExternas = [];
+            let carga = 50; // Carga central
+            let raio = 150; // Raio da superfície gaussiana
+            let movableCharge = null; // Carga móvel: { x, y, q, radius }
+            let draggingCharge = false;
+            let lineDashOffset = 0; // Para animar as linhas
             
             const cargaSlider = document.getElementById('lei1-cargaSlider');
             const cargaDisplay = document.getElementById('lei1-cargaDisplay');
@@ -450,63 +480,135 @@
             const addBtn = document.getElementById('lei1-addCargaBtn');
             const removeBtn = document.getElementById('lei1-removeCargaBtn');
             
-            cargaSlider.addEventListener('input', (e) => {
+            cargaSlider.oninput = (e) => {
                 carga = parseFloat(e.target.value);
                 cargaDisplay.textContent = (carga > 0 ? '+' : '') + carga + ' nC';
-            });
+            };
             
-            raioSlider.addEventListener('input', (e) => {
+            raioSlider.oninput = (e) => {
                 raio = parseFloat(e.target.value);
                 raioDisplay.textContent = raio + ' px';
-            });
+            };
             
-            addBtn.addEventListener('click', () => {
-                const angle = Math.random() * Math.PI * 2;
-                const distance = raio + 80 + Math.random() * 50;
-                cargasExternas.push({
-                    x: 400 + Math.cos(angle) * distance,
-                    y: 300 + Math.sin(angle) * distance,
-                    q: (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 30)
-                });
+            addBtn.onclick = () => {
+                // Adiciona ou reseta a carga móvel
+                movableCharge = {
+                    x: 650,
+                    y: 300,
+                    q: (Math.random() > 0.5 ? 1 : -1) * (20 + Math.random() * 30),
+                    radius: 15
+                };
                 addBtn.classList.add('hidden');
                 removeBtn.classList.remove('hidden');
-            });
+            };
             
-            removeBtn.addEventListener('click', () => {
-                cargasExternas = [];
+            removeBtn.onclick = () => {
+                movableCharge = null;
+                draggingCharge = false;
                 removeBtn.classList.add('hidden');
                 addBtn.classList.remove('hidden');
-            });
-            
-            function draw() {
-                ctx.fillStyle = '#0f172a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Linhas de campo elétrico
-                const numLinhas = Math.abs(carga) / 5;
+                canvas.style.cursor = 'auto';
+            };
+
+            // --- Helpers para arrastar ---
+            function getMousePos(evt) {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
+
+            canvas.onmousedown = (e) => {
+                if (!movableCharge) return;
+                const pos = getMousePos(e);
+                const dist = Math.hypot(pos.x - movableCharge.x, pos.y - movableCharge.y);
+                if (dist < movableCharge.radius) {
+                    draggingCharge = true;
+                    canvas.style.cursor = 'grabbing';
+                }
+            };
+            canvas.onmousemove = (e) => {
+                if (draggingCharge && movableCharge) {
+                    const pos = getMousePos(e);
+                    movableCharge.x = pos.x;
+                    movableCharge.y = pos.y;
+                }
+            };
+            canvas.onmouseup = () => {
+                draggingCharge = false;
+                canvas.style.cursor = movableCharge ? 'grab' : 'auto';
+            };
+            canvas.onmouseleave = () => {
+                draggingCharge = false;
+                canvas.style.cursor = 'auto';
+            };
+            // --- Fim Helpers ---
+
+
+            function drawFieldLines(cx, cy, q, numLinhas) {
+                ctx.lineWidth = 2;
+                ctx.setLineDash([10, 10]); 
+                ctx.lineDashOffset = lineDashOffset * Math.sign(q);
+
                 for (let i = 0; i < numLinhas; i++) {
                     const angle = (i / numLinhas) * Math.PI * 2;
-                    const startX = 400 + Math.cos(angle) * 25;
-                    const startY = 300 + Math.sin(angle) * 25;
-                    const endX = 400 + Math.cos(angle) * (raio + 50);
-                    const endY = 300 + Math.sin(angle) * (raio + 50);
+                    const startX = cx + Math.cos(angle) * 25;
+                    const startY = cy + Math.sin(angle) * 25;
+                    const endX = cx + Math.cos(angle) * 1000;
+                    const endY = cy + Math.sin(angle) * 1000;
                     
-                    ctx.strokeStyle = carga > 0 ? '#a78bfa' : '#f472b6';
-                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = q > 0 ? '#a78bfa' : '#f472b6';
                     ctx.beginPath();
                     ctx.moveTo(startX, startY);
                     ctx.lineTo(endX, endY);
                     ctx.stroke();
                     
                     // Setas
-                    const arrowSize = 8;
-                    const arrowAngle = carga > 0 ? angle : angle + Math.PI;
-                    ctx.beginPath();
-                    ctx.moveTo(endX, endY);
-                    ctx.lineTo(endX - arrowSize * Math.cos(arrowAngle - 0.3), endY - arrowSize * Math.sin(arrowAngle - 0.3));
-                    ctx.moveTo(endX, endY);
-                    ctx.lineTo(endX - arrowSize * Math.cos(arrowAngle + 0.3), endY - arrowSize * Math.sin(arrowAngle + 0.3));
-                    ctx.stroke();
+                    if (q !== 0) {
+                        const arrowDist = 80;
+                        const arrowX = cx + Math.cos(angle) * arrowDist;
+                        const arrowY = cy + Math.sin(angle) * arrowDist;
+                        const arrowAngle = q > 0 ? angle : angle + Math.PI;
+                        ctx.setLineDash([]); 
+                        ctx.beginPath();
+                        ctx.moveTo(arrowX, arrowY);
+                        ctx.lineTo(arrowX - 8 * Math.cos(arrowAngle - 0.3), arrowY - 8 * Math.sin(arrowAngle - 0.3));
+                        ctx.moveTo(arrowX, arrowY);
+                        ctx.lineTo(arrowX - 8 * Math.cos(arrowAngle + 0.3), arrowY - 8 * Math.sin(arrowAngle + 0.3));
+                        ctx.stroke();
+                        ctx.setLineDash([10, 10]);
+                    }
+                }
+            }
+            
+            function draw() {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                lineDashOffset = (lineDashOffset - 1) % 20;
+
+                // --- Calcular Carga Interna Total ---
+                let totalCargaInterna = carga;
+                let cargaMovelInterna = 0;
+                let isMovableInside = false;
+
+                if (movableCharge) {
+                    const dist = Math.hypot(movableCharge.x - 400, movableCharge.y - 300);
+                    if (dist < raio - movableCharge.radius) { // Está dentro
+                        totalCargaInterna += movableCharge.q;
+                        cargaMovelInterna = movableCharge.q;
+                        isMovableInside = true;
+                    }
+                }
+
+                // Desenha linhas de campo
+                const numLinhasInternas = Math.abs(carga) / 8;
+                drawFieldLines(400, 300, carga, numLinhasInternas);
+
+                if (movableCharge) {
+                    const numLinhasExternas = Math.abs(movableCharge.q) / 8;
+                    drawFieldLines(movableCharge.x, movableCharge.y, movableCharge.q, numLinhasExternas);
                 }
                 
                 // Superfície gaussiana
@@ -516,7 +618,7 @@
                 ctx.beginPath();
                 ctx.arc(400, 300, raio, 0, Math.PI * 2);
                 ctx.stroke();
-                ctx.setLineDash([]);
+                ctx.setLineDash([]); 
                 
                 // Carga central
                 ctx.fillStyle = carga > 0 ? '#8b5cf6' : '#ec4899';
@@ -529,27 +631,51 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillText(carga > 0 ? '+' : '−', 400, 300);
                 
-                // Cargas externas
-                cargasExternas.forEach(ce => {
-                    ctx.fillStyle = ce.q > 0 ? '#8b5cf6' : '#ec4899';
+                // Carga móvel
+                if (movableCharge) {
+                    ctx.fillStyle = movableCharge.q > 0 ? '#8b5cf6' : '#ec4899';
+                    // Destaque se estiver sendo arrastada
+                    if (draggingCharge) {
+                        ctx.fillStyle = '#facc15'; // Amarelo
+                    }
                     ctx.beginPath();
-                    ctx.arc(ce.x, ce.y, 15, 0, Math.PI * 2);
+                    ctx.arc(movableCharge.x, movableCharge.y, movableCharge.radius, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.fillStyle = 'white';
                     ctx.font = 'bold 18px Arial';
-                    ctx.fillText(ce.q > 0 ? '+' : '−', ce.x, ce.y);
-                });
+                    ctx.fillText(movableCharge.q > 0 ? '+' : '−', movableCharge.x, movableCharge.y);
+                    
+                    // Atualiza cursor
+                    canvas.style.cursor = draggingCharge ? 'grabbing' : 'grab';
+                } else {
+                     canvas.style.cursor = 'auto';
+                }
                 
-                // Texto informativo
+                // Texto informativo (ATUALIZADO)
                 ctx.fillStyle = '#a78bfa';
                 ctx.font = 'bold 18px Arial';
                 ctx.textAlign = 'left';
-                ctx.fillText(`Fluxo = Q/ε₀ = ${carga.toFixed(1)} nC / ε₀`, 20, 30);
+                // Mostra o fluxo total calculado
+                ctx.fillText(`Fluxo Total = Q_int/ε₀ = ${totalCargaInterna.toFixed(1)} nC / ε₀`, 20, 30);
+                
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '14px Arial';
-                ctx.fillText('(Cargas externas não afetam o fluxo!)', 20, 55);
+                // Mostra o cálculo
+                ctx.fillText(`Q_int = Q_central + Q_móvel_interna`, 20, 55);
+                ctx.fillText(`Q_int = ${carga.toFixed(1)} + ${cargaMovelInterna.toFixed(1)} nC`, 20, 75);
+
+                // Texto na superfície
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Fluxo de Q_int: ${(totalCargaInterna / 8).toFixed(0)}`, 400, 300 - raio - 15);
                 
-                requestAnimationFrame(draw);
+                if (movableCharge && !isMovableInside) {
+                     ctx.fillStyle = '#f472b6';
+                     ctx.fillText(`Fluxo Externo: 0 (linhas entram e saem)`, 400, 300 + raio + 20);
+                }
+                
+                globalAnimationId = requestAnimationFrame(draw);
             }
             
             draw();
@@ -565,7 +691,7 @@
         }
 
         // ============================================
-        // LEI 2: GAUSS PARA MAGNETISMO
+        // LEI 2: GAUSS PARA MAGNETISMO (INTOCADO, V3)
         // ============================================
         function initLei2() {
             const canvas = document.getElementById('lei2-canvas');
@@ -573,104 +699,172 @@
             
             let intensidade = 70;
             let distancia = 120;
-            let segundoIma = false;
-            
+            let isMagnetBroken = false;
+            let lineDashOffset = 0; 
+
+            let gaussianSurface = { x: 600, y: 300, w: 150, h: 200, isDragging: false, dragOffsetX: 0, dragOffsetY: 0 };
+
             const intensidadeSlider = document.getElementById('lei2-intensidadeSlider');
             const intensidadeDisplay = document.getElementById('lei2-intensidadeDisplay');
             const distanciaSlider = document.getElementById('lei2-distanciaSlider');
             const distanciaDisplay = document.getElementById('lei2-distanciaDisplay');
-            const addBtn = document.getElementById('lei2-addImaBtn');
-            const removeBtn = document.getElementById('lei2-removeImaBtn');
+            const breakBtn = document.getElementById('lei2-breakBtn');
+            const resetBtn = document.getElementById('lei2-resetBtn');
             
-            intensidadeSlider.addEventListener('input', (e) => {
+            intensidadeSlider.oninput = (e) => {
                 intensidade = parseFloat(e.target.value);
                 intensidadeDisplay.textContent = intensidade + '%';
-            });
+            };
             
-            distanciaSlider.addEventListener('input', (e) => {
+            distanciaSlider.oninput = (e) => {
                 distancia = parseFloat(e.target.value);
                 distanciaDisplay.textContent = distancia + ' px';
-            });
+            };
             
-            addBtn.addEventListener('click', () => {
-                segundoIma = true;
-                addBtn.classList.add('hidden');
-                removeBtn.classList.remove('hidden');
-            });
+            breakBtn.onclick = () => {
+                isMagnetBroken = true;
+                breakBtn.classList.add('hidden');
+                resetBtn.classList.remove('hidden');
+            };
             
-            removeBtn.addEventListener('click', () => {
-                segundoIma = false;
-                removeBtn.classList.add('hidden');
-                addBtn.classList.remove('hidden');
-            });
-            
-            function drawMagnet(x, y, dist, flip = false) {
+            resetBtn.onclick = () => {
+                isMagnetBroken = false;
+                resetBtn.classList.add('hidden');
+                breakBtn.classList.remove('hidden');
+            };
+
+            // --- Helpers para arrastar ---
+            function getMousePos(evt) {
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
+            canvas.onmousedown = (e) => {
+                const pos = getMousePos(e);
+                if (pos.x > gaussianSurface.x && pos.x < gaussianSurface.x + gaussianSurface.w &&
+                    pos.y > gaussianSurface.y && pos.y < gaussianSurface.y + gaussianSurface.h) {
+                    gaussianSurface.isDragging = true;
+                    gaussianSurface.dragOffsetX = pos.x - gaussianSurface.x;
+                    gaussianSurface.dragOffsetY = pos.y - gaussianSurface.y;
+                    canvas.style.cursor = 'grabbing';
+                }
+            };
+            canvas.onmousemove = (e) => {
+                if (gaussianSurface.isDragging) {
+                    const pos = getMousePos(e);
+                    gaussianSurface.x = pos.x - gaussianSurface.dragOffsetX;
+                    gaussianSurface.y = pos.y - gaussianSurface.dragOffsetY;
+                }
+            };
+            canvas.onmouseup = () => {
+                gaussianSurface.isDragging = false;
+                canvas.style.cursor = 'grab';
+            };
+            canvas.onmouseleave = () => {
+                gaussianSurface.isDragging = false;
+                canvas.style.cursor = 'grab';
+            };
+            // --- Fim Helpers ---
+
+
+            function drawMagnet(x, y, dist, intens) {
                 const halfDist = dist / 2;
-                
-                // Polo Norte (vermelho)
+                const poleWidth = 30;
+                const poleHeight = 80;
+
+                const nPole = { x: x - halfDist - poleWidth, y: y - poleHeight/2 };
                 ctx.fillStyle = '#ef4444';
-                ctx.fillRect(x - halfDist - 30, y - 40, 30, 80);
+                ctx.fillRect(nPole.x, nPole.y, poleWidth, poleHeight);
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 24px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(flip ? 'S' : 'N', x - halfDist - 15, y + 8);
+                ctx.fillText('N', nPole.x + poleWidth/2, y + 8);
                 
-                // Polo Sul (azul)
+                const sPole = { x: x + halfDist, y: y - poleHeight/2 };
                 ctx.fillStyle = '#3b82f6';
-                ctx.fillRect(x + halfDist, y - 40, 30, 80);
+                ctx.fillRect(sPole.x, sPole.y, poleWidth, poleHeight);
                 ctx.fillStyle = 'white';
-                ctx.fillText(flip ? 'N' : 'S', x + halfDist + 15, y + 8);
-                
-                // Linhas de campo magnético
-                const numLinhas = Math.floor(intensidade / 10);
-                for (let i = 0; i < numLinhas; i++) {
-                    const offset = (i - numLinhas / 2) * 15;
-                    const startX = flip ? x + halfDist + 30 : x - halfDist - 30;
-                    const endX = flip ? x - halfDist : x + halfDist;
-                    const controlY = y + offset - 80;
-                    
-                    ctx.strokeStyle = `rgba(34, 211, 238, ${intensidade / 100})`;
-                    ctx.lineWidth = 2;
+                ctx.fillText('S', sPole.x + poleWidth/2, y + 8);
+
+                ctx.fillStyle = '#6b7280';
+                ctx.fillRect(nPole.x + poleWidth, nPole.y, sPole.x - (nPole.x + poleWidth), poleHeight);
+
+                ctx.strokeStyle = `rgba(34, 211, 238, 0.3)`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                const numLinhasInternas = Math.floor(intens / 15);
+                for (let i = 0; i < numLinhasInternas; i++) {
+                    const lineY = y + (i - numLinhasInternas/2) * 10;
                     ctx.beginPath();
-                    ctx.moveTo(startX, y + offset);
-                    ctx.quadraticCurveTo(x, controlY, endX, y + offset);
-                    ctx.stroke();
-                    
-                    // Setas
-                    const arrowX = (startX + endX) / 2;
-                    const arrowY = controlY + (y + offset - controlY) / 2;
-                    const angle = flip ? Math.PI : 0;
-                    ctx.beginPath();
-                    ctx.moveTo(arrowX, arrowY);
-                    ctx.lineTo(arrowX - 8 * Math.cos(angle - 0.3), arrowY - 8 * Math.sin(angle - 0.3));
-                    ctx.moveTo(arrowX, arrowY);
-                    ctx.lineTo(arrowX - 8 * Math.cos(angle + 0.3), arrowY - 8 * Math.sin(angle + 0.3));
+                    ctx.moveTo(sPole.x, lineY);
+                    ctx.lineTo(nPole.x + poleWidth, lineY);
                     ctx.stroke();
                 }
+                ctx.setLineDash([]);
+
+
+                ctx.setLineDash([10, 10]);
+                ctx.lineDashOffset = lineDashOffset;
+                const numLinhas = Math.floor(intens / 10);
+                for (let i = 0; i < numLinhas; i++) {
+                    const offset = (i - numLinhas / 2) * (poleHeight / numLinhas * 0.8);
+                    const startX = nPole.x + poleWidth;
+                    const startY = y + offset;
+                    const endX = sPole.x;
+                    const endY = y + offset;
+                    const controlY = y + offset * 1.5 - (150 * (intens/100)) * (1 - Math.abs(i - numLinhas/2) / (numLinhas/2));
+                    
+                    ctx.strokeStyle = `rgba(34, 211, 238, ${intens / 100})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.quadraticCurveTo(x, controlY, endX, endY);
+                    ctx.stroke();
+
+                    const controlY_low = y + offset * 1.5 + (150 * (intens/100)) * (1 - Math.abs(i - numLinhas/2) / (numLinhas/2));
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.quadraticCurveTo(x, controlY_low, endX, endY);
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
             }
             
             function draw() {
                 ctx.fillStyle = '#0f172a';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Desenhar ímã(s)
-                if (segundoIma) {
-                    drawMagnet(300, 300, distancia, false);
-                    drawMagnet(500, 300, distancia, true);
+                lineDashOffset = (lineDashOffset - 1) % 20;
+
+                if (isMagnetBroken) {
+                    drawMagnet(300, 300, distancia/2, intensidade); 
+                    drawMagnet(550, 300, distancia/2, intensidade); 
                 } else {
-                    drawMagnet(400, 300, distancia, false);
+                    drawMagnet(400, 300, distancia, intensidade);
                 }
+
+                ctx.strokeStyle = gaussianSurface.isDragging ? '#facc15' : '#22d3ee';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([10, 5]);
+                ctx.strokeRect(gaussianSurface.x, gaussianSurface.y, gaussianSurface.w, gaussianSurface.h);
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Fluxo Líquido: 0`, gaussianSurface.x + gaussianSurface.w / 2, gaussianSurface.y - 15);
                 
-                // Texto informativo
                 ctx.fillStyle = '#22d3ee';
                 ctx.font = 'bold 18px Arial';
                 ctx.textAlign = 'left';
-                ctx.fillText('∮ B · dA = 0', 20, 30);
+                ctx.fillText('∮ B · dA = 0 (Arraste a superfície!)', 20, 30);
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '14px Arial';
                 ctx.fillText('Fluxo magnético total = 0 (linhas sempre fechadas)', 20, 55);
                 
-                requestAnimationFrame(draw);
+                globalAnimationId = requestAnimationFrame(draw);
             }
             
             draw();
@@ -686,7 +880,7 @@
         }
 
         // ============================================
-        // LEI 3: LEI DE FARADAY
+        // LEI 3: LEI DE FARADAY (INTOCADO, CÓDIGO ORIGINAL)
         // ============================================
         function initLei3() {
             const canvas = document.getElementById('lei3-canvas');
@@ -728,7 +922,6 @@
                 ctx.fillStyle = '#0f172a';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Atualizar posição do ímã
                 if (!pausado) {
                     magnetY += velocidade * direcao * 0.5;
                     if (magnetY > 500 || magnetY < 100) {
@@ -736,7 +929,6 @@
                     }
                 }
                 
-                // Bobina
                 const bobinaCenterY = 300;
                 const bobinaWidth = 120;
                 const bobinaHeight = 200;
@@ -750,7 +942,6 @@
                     ctx.stroke();
                 }
                 
-                // Ímã
                 const magnetSize = 40;
                 ctx.fillStyle = '#ef4444';
                 ctx.fillRect(380, magnetY - magnetSize, 40, magnetSize);
@@ -764,14 +955,12 @@
                 ctx.fillStyle = 'white';
                 ctx.fillText('S', 400, magnetY + magnetSize / 2);
                 
-                // Calcular FEM induzida (proporcional à velocidade e espiras)
                 const fem = Math.abs(velocidade * espiras * 0.5);
                 const dentroBoina = magnetY > bobinaCenterY - bobinaHeight / 2 && magnetY < bobinaCenterY + bobinaHeight / 2;
                 
-                // Lâmpada
                 const lampadaX = 550;
                 const lampadaY = 300;
-                const brilho = dentroBoina ? fem / 40 : 0;
+                const brilho = (dentroBoina && !pausado) ? fem / 40 : 0;
                 
                 ctx.fillStyle = `rgba(251, 191, 36, ${brilho})`;
                 ctx.beginPath();
@@ -784,7 +973,6 @@
                 ctx.arc(lampadaX, lampadaY, 30, 0, Math.PI * 2);
                 ctx.stroke();
                 
-                // Fios conectando
                 ctx.strokeStyle = '#d97706';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
@@ -797,21 +985,19 @@
                 ctx.lineTo(lampadaX - 30, lampadaY + 40);
                 ctx.stroke();
                 
-                // Texto informativo
                 ctx.fillStyle = '#f59e0b';
                 ctx.font = 'bold 18px Arial';
                 ctx.textAlign = 'left';
-                ctx.fillText(`FEM Induzida ≈ ${fem.toFixed(1)} V`, 20, 30);
+                ctx.fillText(`FEM Induzida ≈ ${brilho > 0 ? fem.toFixed(1) : '0.0'} V`, 20, 30);
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '14px Arial';
-                ctx.fillText(`Fluxo ${direcao > 0 ? 'aumentando' : 'diminuindo'} → Corrente induzida`, 20, 55);
+                ctx.fillText(pausado ? "Movimento parado, fluxo constante." : `Fluxo ${direcao > 0 ? 'aumentando' : 'diminuindo'} → Corrente induzida`, 20, 55);
                 
-                requestAnimationFrame(draw);
+                globalAnimationId = requestAnimationFrame(draw);
             }
             
             draw();
             
-            // Sistema de voz
             const steps = [
                 document.getElementById('lei3-step1'),
                 document.getElementById('lei3-step2'),
@@ -822,7 +1008,7 @@
         }
 
         // ============================================
-        // LEI 4: AMPÈRE-MAXWELL
+        // LEI 4: AMPÈRE-MAXWELL (INTOCADO, CÓDIGO ORIGINAL)
         // ============================================
         function initLei4() {
             const canvas = document.getElementById('lei4-canvas');
@@ -868,7 +1054,6 @@
                 direcao *= -1;
             });
             
-            // Criar partículas para visualizar campo magnético
             for (let i = 0; i < 30; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const radius = 50 + Math.random() * 150;
@@ -880,20 +1065,17 @@
             }
             
             function drawWire(x, y, dir) {
-                // Fio (corte transversal)
                 ctx.fillStyle = '#f59e0b';
                 ctx.beginPath();
                 ctx.arc(x, y, 15, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Símbolo de corrente
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 24px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(dir > 0 ? '⊙' : '⊗', x, y);
                 
-                // Loops de campo magnético
                 const numLoops = Math.floor(corrente / 2);
                 for (let i = 1; i <= numLoops; i++) {
                     const radius = i * 25;
@@ -903,7 +1085,6 @@
                     ctx.arc(x, y, radius, 0, Math.PI * 2);
                     ctx.stroke();
                     
-                    // Setas indicando direção
                     const arrowAngle = Math.PI / 4;
                     const arrowX = x + Math.cos(arrowAngle) * radius;
                     const arrowY = y + Math.sin(arrowAngle) * radius;
@@ -922,7 +1103,6 @@
                 ctx.fillStyle = '#0f172a';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Atualizar e desenhar partículas
                 particulas.forEach(p => {
                     p.angle += p.speed * direcao * (corrente / 8);
                     const x = 400 + Math.cos(p.angle) * p.radius;
@@ -934,7 +1114,6 @@
                     ctx.fill();
                 });
                 
-                // Desenhar fio(s)
                 if (segundoFio) {
                     drawWire(300, 300, direcao);
                     drawWire(500, 300, -direcao);
@@ -942,7 +1121,6 @@
                     drawWire(400, 300, direcao);
                 }
                 
-                // Loop de Ampère
                 ctx.strokeStyle = '#fbbf24';
                 ctx.lineWidth = 3;
                 ctx.setLineDash([10, 5]);
@@ -951,7 +1129,6 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
                 
-                // Texto informativo
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 18px Arial';
                 ctx.textAlign = 'left';
@@ -961,12 +1138,11 @@
                 ctx.fillText(`Campo magnético ${direcao > 0 ? 'anti-horário' : 'horário'} (regra da mão direita)`, 20, 55);
                 ctx.fillText('⊙ = corrente saindo da tela  |  ⊗ = corrente entrando na tela', 20, 580);
                 
-                requestAnimationFrame(draw);
+                globalAnimationId = requestAnimationFrame(draw);
             }
             
             draw();
             
-            // Sistema de voz
             const steps = [
                 document.getElementById('lei4-step1'),
                 document.getElementById('lei4-step2'),
@@ -984,4 +1160,4 @@
         });
     </script>
 </body>
-</html>
+</html> 
